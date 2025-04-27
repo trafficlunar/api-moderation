@@ -1,15 +1,9 @@
 # api-moderation
 
-To install dependencies:
+Only supports images as of right now.
 
-```bash
-bun install
-```
+## Routes
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.10. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+- POST `/image`
+  - returns `{ success: true }` if image passes
+  - returns `{ success: false, error: "" }` if image fails or anything else fails
