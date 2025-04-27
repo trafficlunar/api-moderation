@@ -15,7 +15,7 @@ import * as nsfwjs from "nsfwjs";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 const PORT = process.env.PORT || 3000;
 const THRESHOLD = Number(process.env.THRESHOLD || 0.5);
-const MODEL_PATH = path.join(__dirname, "models", "mobilenet_v2_mid", "model.json");
+const MODEL_PATH = path.join(__dirname, "..", "models", "mobilenet_v2_mid", "model.json");
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));

@@ -1,20 +1,22 @@
-FROM oven/bun:1.2.10 AS base
+FROM node:22-slim AS base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+COPY . /app
 WORKDIR /app
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lock /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile && bun pm trust --all
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-# copy node_modules from temp directory
-# then copy all project files into the image
-FROM base AS release
-COPY --from=install /temp/dev/node_modules node_modules
-COPY . .
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
 
-# run the app
-USER bun
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "index.ts" ]
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+
+EXPOSE 3000
+CMD [ "pnpm", "start" ]
