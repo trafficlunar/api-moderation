@@ -6,7 +6,7 @@ WORKDIR /app
 FROM base AS install
 RUN mkdir -p /temp/dev
 COPY package.json bun.lock /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
+RUN cd /temp/dev && bun install --frozen-lockfile && bun pm trust --all
 
 # copy node_modules from temp directory
 # then copy all project files into the image
